@@ -1,0 +1,42 @@
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+def has_path_sum(root: TreeNode, target_sum: int) -> bool:
+    # Base case: if the root is None, return False (no path)
+    if not root:
+        return False
+
+    # Check if we've reached a leaf node and if the current path sum matches the target
+    if not root.left and not root.right:
+        return root.val == target_sum
+
+    # Recursively check the left and right subtrees, subtracting the node value from the target sum
+    target_sum -= root.val
+    return has_path_sum(root.left, target_sum) or has_path_sum(root.right, target_sum)
+
+# Example usage
+# Example tree:
+#        5
+#       / \
+#      4   8
+#     /   / \
+#    11  13  4
+#   /  \      \
+#  7    2      1
+
+root = TreeNode(5)
+root.left = TreeNode(4)
+root.right = TreeNode(8)
+root.left.left = TreeNode(11)
+root.left.left.left = TreeNode(7)
+root.left.left.right = TreeNode(2)
+root.right.left = TreeNode(13)
+root.right.right = TreeNode(4)
+root.right.right.right = TreeNode(1)
+
+target_sum = 22
+result = has_path_sum(root, target_sum)
+print(result)  # Should print: True
