@@ -1,0 +1,59 @@
+def find_encrypted_path(maze, word):
+    rows, cols = len(maze), len(maze[0])
+    word_index = 0
+    path = []
+
+    # Find the start position
+    for r in range(rows):
+        for c in range(cols):
+            if maze[r][c] == 'S':
+                start = (r, c)
+                break
+
+    def is_valid(r, c, visited):
+        return 0 <= r < rows and 0 <= c < cols and (r, c) not in visited and maze[r][c] != '#'
+
+    def dfs(r, c, index, visited, current_path):
+        if index == len(word) and maze[r][c] == 'E':
+            return current_path + [(r, c)]
+
+        visited.add((r, c))
+        current_path.append((r, c))
+
+        directions = [(-1,0), (1,0), (0,-1), (0,1)]  # up, down, left, right
+        for dr, dc in directions:
+            nr, nc = r + dr, c + dc
+            if not is_valid(nr, nc, visited):
+                continue
+
+            cell_value = maze[nr][nc]
+            # If we haven't finished the word, expect the next letter
+            if index < len(word) and cell_value == word[index]:
+                result = dfs(nr, nc, index + 1, visited.copy(), current_path.copy())
+                if result:
+                    return result
+            # If we've completed the word, allow space or 'E'
+            elif index == len(word) and (cell_value == ' ' or cell_value == 'E'):
+                result = dfs(nr, nc, index, visited.copy(), current_path.copy())
+                if result:
+                    return result
+            # Also allow moving through spaces before reaching letters
+            elif index < len(word) and cell_value == ' ':
+                result = dfs(nr, nc, index, visited.copy(), current_path.copy())
+                if result:
+                    return result
+
+        return None
+
+    return dfs(start[0], start[1], 0, set(), [])
+
+# Example usage
+maze = [
+    ['S', ' ', 'A', '#', ' ', 'T'],
+    ['#', '#', 'B', '#', ' ', 'R'],
+    [' ', ' ', 'C', 'D', 'E', ' '],
+    [' ', '#', '#', '#', '#', 'E']
+]
+
+path = find_encrypted_path(maze, "ABCDE")
+print("Encrypted path:", path)
