@@ -1,0 +1,50 @@
+def spiral_encode(message: str, rows: int, cols: int) -> list[list[str]]:
+    total_cells = rows * cols
+    message = message[:total_cells].ljust(total_cells, '_')
+    matrix = [['' for _ in range(cols)] for _ in range(rows)]
+
+    top, bottom, left, right = 0, rows - 1, 0, cols - 1
+    index = 0
+
+    while top <= bottom and left <= right:
+        for c in range(left, right + 1):
+            matrix[top][c] = message[index]; index += 1
+        top += 1
+        for r in range(top, bottom + 1):
+            matrix[r][right] = message[index]; index += 1
+        right -= 1
+        if top <= bottom:
+            for c in range(right, left - 1, -1):
+                matrix[bottom][c] = message[index]; index += 1
+            bottom -= 1
+        if left <= right:
+            for r in range(bottom, top - 1, -1):
+                matrix[r][left] = message[index]; index += 1
+            left += 1
+    return matrix
+
+def spiral_decode(matrix: list[list[str]]) -> str:
+    rows, cols = len(matrix), len(matrix[0])
+    top, bottom, left, right = 0, rows - 1, 0, cols - 1
+    result = []
+
+    while top <= bottom and left <= right:
+        for c in range(left, right + 1): result.append(matrix[top][c])
+        top += 1
+        for r in range(top, bottom + 1): result.append(matrix[r][right])
+        right -= 1
+        if top <= bottom:
+            for c in range(right, left - 1, -1): result.append(matrix[bottom][c])
+            bottom -= 1
+        if left <= right:
+            for r in range(bottom, top - 1, -1): result.append(matrix[r][left])
+            left += 1
+    return ''.join(result)
+
+# Example usage
+message = "HELLOSPIRAL"
+rows, cols = 3, 4
+encoded = spiral_encode(message, rows, cols)
+for row in encoded:
+    print(row)
+print("Decoded message:", spiral_decode(encoded))
