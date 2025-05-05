@@ -1,0 +1,21 @@
+import heapq
+
+def min_cost_path(grid: list[list[int]], K: int) -> int:
+    N = len(grid)
+    if N == 0 or K == 0:
+        return -1
+
+    heap = [(grid[0][0], 0, 0, 1)]  # (cost, row, col, steps)
+    visited = {}
+    
+    while heap:
+        cost, r, c, steps = heapq.heappop(heap)
+        if r == N - 1 and c == N - 1 and steps <= K:
+            return cost
+        if (r, c) not in visited or visited[(r, c)] > steps:
+            visited[(r, c)] = steps
+            if r + 1 < N and steps + 1 <= K:
+                heapq.heappush(heap, (cost + grid[r + 1][c], r + 1, c, steps + 1))
+            if c + 1 < N and steps + 1 <= K:
+                heapq.heappush(heap, (cost + grid[r][c + 1], r, c + 1, steps + 1))
+    return -1
