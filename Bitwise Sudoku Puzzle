@@ -1,0 +1,31 @@
+from copy import deepcopy
+
+def solve_bitwise_sudoku(grid: list[list[int]], row_xors: list[int], col_xors: list[int]) -> list[list[int]]:
+    SIZE, NUMS = 4, [1, 2, 3, 4]
+
+    def xor(vals): return eval("^".join(map(str, vals)))
+    def is_valid():
+        for i in range(SIZE):
+            row = grid[i]
+            col = [grid[j][i] for j in range(SIZE)]
+            if sorted(row) != NUMS or sorted(col) != NUMS:
+                return False
+            if xor(row) != row_xors[i] or xor(col) != col_xors[i]:
+                return False
+        return True
+
+    def solve(r=0, c=0):
+        if r == SIZE:
+            return deepcopy(grid) if is_valid() else None
+        nr, nc = (r, c+1) if c+1 < SIZE else (r+1, 0)
+        if grid[r][c]: return solve(nr, nc)
+        for n in NUMS:
+            if n in grid[r] or n in [grid[i][c] for i in range(SIZE)]:
+                continue
+            grid[r][c] = n
+            res = solve(nr, nc)
+            if res: return res
+            grid[r][c] = 0
+        return None
+
+    return solve()
