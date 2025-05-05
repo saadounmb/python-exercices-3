@@ -1,0 +1,38 @@
+def count_valid_paths(maze: list[list[str]]) -> int:
+    from collections import defaultdict
+
+    rows, cols = len(maze), len(maze[0])
+    total_paths = 0
+
+    for r in range(rows):
+        for c in range(cols):
+            if maze[r][c] == 'S':
+                start = (r, c)
+            if maze[r][c] == 'E':
+                end = (r, c)
+
+    def dfs(r, c, visited, digit_counts):
+        nonlocal total_paths
+        if not (0 <= r < rows and 0 <= c < cols) or maze[r][c] == '#' or (r, c) in visited:
+            return
+
+        cell = maze[r][c]
+        if cell.isdigit():
+            if digit_counts[(r, c)] >= int(cell):
+                return
+            digit_counts[(r, c)] += 1
+
+        visited.add((r, c))
+
+        if (r, c) == end:
+            total_paths += 1
+        else:
+            for dr, dc in [(-1,0), (1,0), (0,-1), (0,1)]:
+                dfs(r+dr, c+dc, visited, digit_counts)
+
+        visited.remove((r, c))
+        if cell.isdigit():
+            digit_counts[(r, c)] -= 1
+
+    dfs(start[0], start[1], set(), defaultdict(int))
+    return total_paths
