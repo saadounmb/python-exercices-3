@@ -1,0 +1,26 @@
+from itertools import permutations
+
+def reconstruct_equation(pieces):
+    for perm in permutations(pieces):
+        try:
+            eq = ' '.join(perm)
+            if '=' not in perm:
+                continue
+            eq_parts = eq.split(' = ')
+            if len(eq_parts) != 2:
+                continue
+            left, right = eq_parts
+            # Only evaluate the left side
+            if eval(left) == eval(right):
+                return eq
+        except:
+            continue
+    return None
+
+# 🧪 Example 1
+pieces1 = ["3", "+", "4", "=", "7"]
+print(reconstruct_equation(pieces1))  # Output: "3 + 4 = 7"
+
+# 🧪 Example 2
+pieces2 = ["2", "*", "(", "3", "+", "1", ")", "=", "8"]
+print(reconstruct_equation(pieces2))  # Output: "2 * ( 3 + 1 ) = 8"
