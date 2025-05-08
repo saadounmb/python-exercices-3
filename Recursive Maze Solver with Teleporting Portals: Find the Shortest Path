@@ -1,0 +1,59 @@
+def solve_maze(maze):
+    from collections import defaultdict
+    import copy
+
+    rows, cols = len(maze), len(maze[0])
+    visited = set()
+
+    # Step 1: Locate S, E, and portals
+    portals = defaultdict(list)
+    start = end = None
+
+    for r in range(rows):
+        for c in range(cols):
+            cell = maze[r][c]
+            if cell == 'S':
+                start = (r, c)
+            elif cell == 'E':
+                end = (r, c)
+            elif cell.isalpha():
+                portals[cell].append((r, c))
+
+    # Step 2: Portal mapping
+    portal_map = {}
+    for portal, positions in portals.items():
+        if len(positions) == 2:
+            a, b = positions
+            portal_map[a] = b
+            portal_map[b] = a
+
+    # Step 3: Recursive DFS
+    def dfs(pos, visited):
+        if pos == end:
+            return 0
+
+        r, c = pos
+        visited.add(pos)
+        min_path = float('inf')
+
+        # Explore 4 directions
+        for dr, dc in [(-1,0), (1,0), (0,-1), (0,1)]:
+            nr, nc = r + dr, c + dc
+            if 0 <= nr < rows and 0 <= nc < cols:
+                npos = (nr, nc)
+                if npos not in visited and maze[nr][nc] != '#':
+                    result = dfs(npos, visited.copy())
+                    if result is not None:
+                        min_path = min(min_path, 1 + result)
+
+        # If it's a portal, teleport
+        if maze[r][c].isalpha():
+            portal_exit = portal_map.get(pos)
+            if portal_exit and portal_exit not in visited:
+                result = dfs(portal_exit, visited.copy())
+                if result is not None:
+                    min_path = min(min_path, 1 + result)
+
+        return min_path if min_path != float('inf') else None
+
+    return dfs(start, set())
