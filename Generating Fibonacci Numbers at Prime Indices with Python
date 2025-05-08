@@ -1,0 +1,59 @@
+def is_prime(n):
+    if n < 2: return False
+    if n == 2: return True
+    if n % 2 == 0: return False
+    for i in range(3, int(n**0.5)+1, 2):
+        if n % i == 0: return False
+    return True
+
+# Generator version
+def prime_indexed_fib():
+    a, b = 0, 1
+    index = 0
+    while True:
+        if is_prime(index):
+            yield a
+        a, b = b, a + b
+        index += 1
+
+# Class-based iterator with save/resume
+class PrimeIndexedFibonacci:
+    def __init__(self):
+        self.a = 0
+        self.b = 1
+        self.index = 0
+
+    def __iter__(self): return self
+
+    def __next__(self):
+        while True:
+            if is_prime(self.index):
+                val = self.a
+                self.a, self.b = self.b, self.a + self.b
+                self.index += 1
+                return val
+            self.a, self.b = self.b, self.a + self.b
+            self.index += 1
+
+    def __getstate__(self):
+        return (self.a, self.b, self.index)
+
+    def __setstate__(self, state):
+        self.a, self.b, self.index = state
+
+# Example usage
+if __name__ == "__main__":
+    print("First 10 prime-indexed Fibonacci numbers (generator):")
+    gen = prime_indexed_fib()
+    for _ in range(10):
+        print(next(gen), end=' ')
+
+    print("\n\nUsing class-based iterator with state save/resume:")
+    fib = PrimeIndexedFibonacci()
+    for _ in range(5):
+        print(next(fib), end=' ')
+    saved = fib.__getstate__()
+    fib2 = PrimeIndexedFibonacci()
+    fib2.__setstate__(saved)
+    for _ in range(5):
+        print(next(fib2), end=' ')
