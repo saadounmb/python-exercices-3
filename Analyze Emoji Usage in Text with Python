@@ -1,0 +1,16 @@
+import emoji
+from collections import defaultdict
+
+def count_emojis(text):
+    emoji_counts = defaultdict(int)
+
+    for char in text:
+        if emoji.is_emoji(char):
+            emoji_counts[char] += 1
+
+    return dict(emoji_counts)
+
+# Example usage
+input_text = "I love 🍕 and 🐍. 🍕 is life. 🐍 is Python. 🍕🍕🍕"
+result = count_emojis(input_text)
+print(result)
