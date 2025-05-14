@@ -1,0 +1,16 @@
+from datetime import datetime, date
+
+def days_until_birthday(birthday_str):
+    birthday = datetime.strptime(birthday_str, "%Y-%m-%d").date()
+    today = date.today()
+    next_birthday = birthday.replace(year=today.year)
+    
+    if next_birthday < today:
+        next_birthday = next_birthday.replace(year=today.year + 1)
+
+    days_left = (next_birthday - today).days
+
+    return "Happy Birthday! 🎉" if days_left == 0 else f"Your next birthday is in {days_left} day(s)."
+
+# Example usage
+print(days_until_birthday("1995-09-12"))
